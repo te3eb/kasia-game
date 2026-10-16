@@ -1,10 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Kasia's Warsaw Adventure 🍀</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    overflow:hidden;
+    background:black;
+    font-family:Arial,sans-serif;
+}
+
+canvas{
+    display:block;
+}
+
+#ui{
+    position:absolute;
+    top:15px;
+    left:15px;
+    color:white;
+    font-size:22px;
+    font-weight:bold;
+    text-shadow:2px 2px 5px black;
+    z-index:2;
+}
+
+#message{
+    position:absolute;
+    width:100%;
+    top:15px;
+    text-align:center;
+    color:white;
+    font-size:24px;
+    font-weight:bold;
+    text-shadow:2px 2px 5px black;
+    z-index:2;
+}
+
+#ending{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.9);
+    color:white;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+    z-index:50;
+}
+
+.button{
+    padding:15px 25px;
+    border:none;
+    border-radius:10px;
+    margin:10px;
+    cursor:pointer;
+    font-size:20px;
+}
+
+#yesBtn{
+    background:#ff5757;
+    color:white;
+}
+
+#pubBtn{
+    background:#22c55e;
+    color:white;
+}
+
+#speech{
+    margin-top:15px;
+    color:#ffd700;
+}
+</style>
+</head>
+
+<body>
+
+<div id="ui">
+🍀 0/4
+</div>
+
+<div id="message">
+Arrow Keys to Move • Space to Jump
+</div>
+
+<div id="ending">
+
+<h1>🎉 You Made It To Warsaw!</h1>
+
+<p style="max-width:700px;margin:20px;">
+Would you like to avoid hanging out with Amine?
+</p>
+
+<button id="yesBtn" class="button">
+YES 😏
+</button>
+
+<button id="pubBtn" class="button">
+🍀 Irish Pub
+</button>
+
+<div id="speech"></div>
+
+</div>
+
+<canvas id="game"></canvas>
+
+<script>
+
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const groundY = canvas.height - 130;
+const groundY = canvas.height - 180;
 
 // IMAGES
 
@@ -32,151 +153,122 @@ shamrockImg.src = "shamrock.png";
 const boxImg = new Image();
 boxImg.src = "box.png";
 
+// GAME STATE
+
 let chapter = 1;
-let gameEnded = false;
 let score = 0;
+let worldX = 0;
+let gameEnded = false;
+
+const keys = {};
 
 const player = {
-    x:120,
+    x:180,
     y:groundY,
-    w:60,
-    h:90,
+    w:100,
+    h:120,
     vy:0,
     jumping:false
 };
 
 const shamrocks = [
-    {x:900,collected:false},
-    {x:1800,collected:false},
-    {x:3000,collected:false},
-    {x:4300,collected:false}
+    {x:1000,collected:false},
+    {x:2200,collected:false},
+    {x:3400,collected:false},
+    {x:4700,collected:false}
 ];
 
 const obstacles = [
-    {x:700,type:"box"},
-    {x:1200,type:"box"},
-    {x:1700,type:"box"},
-    {x:2400,type:"paper"},
-    {x:2900,type:"paper"},
-    {x:3500,type:"paper"}
+    {x:800},
+    {x:1500},
+    {x:2800},
+    {x:3900}
 ];
 
-let worldX = 0;
+// KEYBOARD
 
-document.addEventListener("keydown",(e)=>{
+document.addEventListener("keydown",e=>{
+
+    keys[e.code] = true;
 
     if(e.code==="Space" && !player.jumping){
 
-        player.vy=-18;
-        player.jumping=true;
+        player.vy = -18;
+        player.jumping = true;
 
     }
 
 });
 
+document.addEventListener("keyup",e=>{
+
+    keys[e.code] = false;
+
+});
+
+// BACKGROUND
+
 function drawBackground(){
 
-    if(chapter===1){
+    let bg;
 
-        if(poznanBg.complete){
-            ctx.drawImage(
-                poznanBg,
-                0,
-                0,
-                canvas.width,
-                canvas.height
-            );
-        }
+    if(chapter===1) bg = poznanBg;
+    else if(chapter===2) bg = trainBg;
+    else if(chapter===3) bg = warsawBg;
+    else bg = pubBg;
 
-        document.getElementById("ui").innerText =
-        `Poznań 📦 | 🍀 ${score}/4`;
-
-    }
-
-    else if(chapter===2){
-
-        if(trainBg.complete){
-            ctx.drawImage(
-                trainBg,
-                0,
-                0,
-                canvas.width,
-                canvas.height
-            );
-        }
-
-        document.getElementById("ui").innerText =
-        `Train 🚆 | 🍀 ${score}/4`;
-
-    }
-
-    else if(chapter===3){
-
-        if(warsawBg.complete){
-            ctx.drawImage(
-                warsawBg,
-                0,
-                0,
-                canvas.width,
-                canvas.height
-            );
-        }
-
-        document.getElementById("ui").innerText =
-        `Warsaw 🏙 | 🍀 ${score}/4`;
-
-    }
-
-    else{
-
-        if(pubBg.complete){
-            ctx.drawImage(
-                pubBg,
-                0,
-                0,
-                canvas.width,
-                canvas.height
-            );
-        }
-
-        document.getElementById("ui").innerText =
-        `Irish Pub 🍀 | 🍀 ${score}/4`;
-
-    }
+    ctx.drawImage(
+        bg,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
 
 }
+
+// KASIA
 
 function drawPlayer(){
 
-    if(kasiaImg.complete){
+    ctx.drawImage(
 
-        ctx.drawImage(
-            kasiaImg,
-            player.x,
-            player.y - 40,
-            100,
-            120
-        );
+        kasiaImg,
 
-    }
+        0,
+        0,
+        313,
+        313,
+
+        player.x,
+        player.y-40,
+
+        120,
+        120
+
+    );
 
 }
+
+// AMINE
 
 function drawAmine(){
 
-    if(chapter >= 3 && amineImg.complete){
+    if(chapter >= 3){
 
         ctx.drawImage(
             amineImg,
-            canvas.width-260,
-            groundY-40,
-            100,
-            120
+            canvas.width-300,
+            groundY-60,
+            140,
+            180
         );
 
     }
 
 }
+
+// SHAMROCKS
 
 function drawShamrocks(){
 
@@ -185,189 +277,5 @@ function drawShamrocks(){
         if(!s.collected){
 
             ctx.drawImage(
-                shamrockImg,
-                s.x-worldX,
-                groundY-100,
-                50,
-                50
-            );
 
-        }
-
-    });
-
-}
-
-function drawObstacle(o){
-
-    const screenX = o.x - worldX;
-
-    if(o.type==="box"){
-
-        if(boxImg.complete){
-
-            ctx.drawImage(
-                boxImg,
-                screenX,
-                groundY+5,
-                60,
-                60
-            );
-
-        }
-
-    }
-
-    if(o.type==="paper"){
-
-        ctx.fillStyle="white";
-        ctx.fillRect(
-            screenX,
-            groundY+10,
-            45,
-            55
-        );
-
-        ctx.fillStyle="black";
-        ctx.font="30px Arial";
-        ctx.fillText(
-            "📝",
-            screenX+5,
-            groundY+45
-        );
-
-    }
-
-}
-
-function update(){
-
-    if(gameEnded) return;
-
-    worldX += 4;
-
-    player.vy += 0.9;
-    player.y += player.vy;
-
-    if(player.y >= groundY){
-
-        player.y = groundY;
-        player.vy = 0;
-        player.jumping = false;
-
-    }
-
-    for(const s of shamrocks){
-
-        const sx = s.x - worldX;
-
-        if(
-            !s.collected &&
-            Math.abs(player.x-sx) < 50
-        ){
-
-            s.collected = true;
-            score++;
-
-        }
-
-    }
-
-    for(const o of obstacles){
-
-        const ox = o.x - worldX;
-
-        if(
-            player.x < ox+45 &&
-            player.x+player.w > ox &&
-            player.y+player.h > groundY+10
-        ){
-
-            worldX -= 50;
-
-        }
-
-    }
-
-    if(worldX > 1800 && chapter===1){
-
-        chapter=2;
-
-        document.getElementById("message").innerText =
-        "🚆 Traveling from Poznań to Warsaw!";
-
-    }
-
-    if(worldX > 2400 && chapter===2){
-
-        chapter=3;
-
-        document.getElementById("message").innerText =
-        "🏙 Welcome to Warsaw!";
-
-    }
-
-    if(worldX > 4200 && chapter===3){
-
-        chapter=4;
-
-        document.getElementById("message").innerText =
-        "🍀 Find the Irish Pub!";
-
-    }
-
-    if(worldX > 5200){
-
-        endGame();
-
-    }
-
-}
-
-function draw(){
-
-    drawBackground();
-
-    drawShamrocks();
-
-    drawPlayer();
-
-    drawAmine();
-
-    obstacles.forEach(drawObstacle);
-
-}
-
-function gameLoop(){
-
-    update();
-
-    draw();
-
-    requestAnimationFrame(gameLoop);
-
-}
-
-function endGame(){
-
-    gameEnded = true;
-
-    document.getElementById("ending")
-    .style.display = "flex";
-
-}
-
-gameLoop();
-
-const yesBtn =
-document.getElementById("yesBtn");
-
-const speech =
-document.getElementById("speech");
-
-function moveButton(){
-
-    const maxX =
-    window.innerWidth - 150;
-
-    const
+                
