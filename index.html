@@ -160,12 +160,18 @@ function drawPlayer(){
     if(!kasia.complete) return;
 
     ctx.drawImage(
-        kasia,
-        player.x,
-        player.y - 120,
-        140,
-        180
-    );
+    kasia,
+
+    0,
+    0,
+    kasia.width / 2,
+    kasia.height,
+
+    player.x,
+    player.y - 120,
+    140,
+    180
+);
 
 }
 
@@ -233,11 +239,7 @@ function drawBoxes(){
 
 function update(){
 
-    if(keys["ArrowRight"])
-        worldX += 8;
-
-    if(keys["ArrowLeft"])
-        worldX = Math.max(0,worldX-8);
+    worldX += 5;
 
     player.vy += 0.9;
     player.y += player.vy;
