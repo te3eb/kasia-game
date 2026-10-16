@@ -216,11 +216,20 @@ function drawPlayer(){
     if(!kasia.complete) return;
 
     ctx.drawImage(
+
         kasia,
+
+        0,
+        0,
+        kasia.width / 2,
+        kasia.height,
+
         player.x,
         player.y - 140,
-        120,
-        160
+
+        100,
+        150
+
     );
 
 }
