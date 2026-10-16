@@ -215,21 +215,17 @@ function drawPlayer(){
 
     if(!kasia.complete) return;
 
+    const scale = 0.35;
+
+    const width = kasia.width * scale;
+    const height = kasia.height * scale;
+
     ctx.drawImage(
-
         kasia,
-
-        0,
-        0,
-        kasia.width / 2,
-        kasia.height,
-
         player.x,
-        player.y - 140,
-
-        100,
-        150
-
+        player.y - height + 40,
+        width,
+        height
     );
 
 }
