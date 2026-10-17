@@ -47,8 +47,8 @@ canvas{
     justify-content:center;
     align-items:center;
     flex-direction:column;
-    z-index:999;
     text-align:center;
+    z-index:999;
 }
 
 .button{
@@ -71,8 +71,8 @@ canvas{
 }
 
 #speech{
-    color:#ffd700;
     margin-top:20px;
+    color:#ffd700;
 }
 </style>
 </head>
@@ -175,7 +175,7 @@ document.addEventListener("keydown",(e)=>{
 
     if(e.code==="Space" && !player.jumping){
 
-        player.vy = -22;
+        player.vy = -24;
         player.jumping = true;
 
     }
@@ -215,9 +215,9 @@ function drawPlayer(){
     ctx.drawImage(
         kasia,
         player.x,
-        player.y - 70,
-        80,
-        110
+        player.y - 35,
+        65,
+        85
     );
 
 }
@@ -233,9 +233,9 @@ function drawAmine(){
     ctx.drawImage(
         amine,
         canvas.width - 220,
-        ground - 70,
-        100,
-        140
+        ground - 45,
+        90,
+        120
     );
 
 }
@@ -250,10 +250,10 @@ function drawShamrocks(){
 
             ctx.drawImage(
                 shamrock,
-                s.x-worldX,
-                ground - 15,
-                40,
-                40
+                s.x - worldX,
+                ground - 10,
+                35,
+                35
             );
 
         }
@@ -270,10 +270,10 @@ function drawBoxes(){
 
         ctx.drawImage(
             box,
-            x-worldX,
-            ground + 10,
-            50,
-            50
+            x - worldX,
+            ground + 20,
+            45,
+            45
         );
 
     });
@@ -299,13 +299,15 @@ function update(){
 
     }
 
+    // SHAMROCKS
+
     shamrocks.forEach(s=>{
 
         const sx = s.x - worldX;
 
         if(
             !s.collected &&
-            Math.abs(player.x - sx) < 60
+            Math.abs(player.x - sx) < 50
         ){
 
             s.collected = true;
@@ -315,23 +317,158 @@ function update(){
 
     });
 
-    // BOX COLLISIONS
+    // SIMPLE BOX COLLISION
 
     boxes.forEach(x=>{
 
         const bx = x - worldX;
 
-        const touching =
-            player.x + 55 > bx &&
-            player.x < bx + 50;
+        const horizontalHit =
+            player.x + 45 > bx &&
+            player.x < bx + 45;
 
-        const tooLow =
-            player.y > ground - 55;
+        const lowEnough =
+            player.y > ground - 40;
 
-        if(touching && tooLow){
+        if(horizontalHit && lowEnough){
 
             worldX -= 120;
 
         }
 
     });
+
+    document.getElementById("ui").innerHTML =
+    "🍀 " + score + " / 4";
+
+    if(worldX > 1500) chapter = 2;
+    if(worldX > 2800) chapter = 3;
+    if(worldX > 4300) chapter = 4;
+
+    if(worldX > 5800){
+
+        endGame();
+
+    }
+
+}
+
+// DRAW
+
+function draw(){
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    drawBackground();
+    drawShamrocks();
+    drawBoxes();
+    drawPlayer();
+    drawAmine();
+
+}
+
+// END GAME
+
+function endGame(){
+
+    gameEnded = true;
+
+    document.getElementById("ending")
+    .style.display = "flex";
+
+}
+
+// LOOP
+
+function loop(){
+
+    update();
+    draw();
+
+    requestAnimationFrame(loop);
+
+}
+
+window.onload = ()=>{
+
+    loop();
+
+};
+
+// FUNNY BUTTON
+
+const yesBtn =
+document.getElementById("yesBtn");
+
+const speech =
+document.getElementById("speech");
+
+function moveButton(){
+
+    const maxX =
+    window.innerWidth - 200;
+
+    const maxY =
+    window.innerHeight - 100;
+
+    yesBtn.style.position="absolute";
+
+    yesBtn.style.left =
+    Math.random()*maxX + "px";
+
+    yesBtn.style.top =
+    Math.random()*maxY + "px";
+
+    const jokes = [
+        "Nice try 😂",
+        "Not that easy 😏",
+        "The pub is this way 🍀",
+        "Current success rate: 0%",
+        "Amine used Quick Attack!"
+    ];
+
+    speech.innerText =
+    jokes[Math.floor(Math.random()*jokes.length)];
+
+}
+
+yesBtn.addEventListener(
+"mouseover",
+moveButton
+);
+
+// TRUE ENDING
+
+document
+.getElementById("pubBtn")
+.addEventListener("click",()=>{
+
+document.getElementById("ending").innerHTML=`
+
+<h1>🏆 TRUE ENDING</h1>
+
+<h2>One Last Warsaw Adventure</h2>
+
+<p>✅ Survived Poznań</p>
+<p>✅ Reached Warsaw</p>
+<p>✅ Collected Shamrocks</p>
+<p>✅ Found The Irish Pub</p>
+<p>✅ Hung Out With Amine</p>
+
+<br>
+
+<h1>See You Soon hot stuff 🖤🍀</h1>
+
+`;
+
+});
+
+</script>
+
+</body>
+</html>
