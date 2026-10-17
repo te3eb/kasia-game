@@ -168,7 +168,9 @@ const boxes = [
     2600,
     3900
 ];
-
+const bossBox = {
+    x: 5400
+};
 // JUMP
 
 document.addEventListener("keydown",(e)=>{
@@ -277,7 +279,15 @@ function drawBoxes(){
         );
 
     });
+    // BOSS BOX
 
+ctx.drawImage(
+    box,
+    bossBox.x - worldX,
+    ground - 80,
+    180,
+    180
+);
 }
 
 // UPDATE
@@ -335,7 +345,21 @@ function update(){
             worldX -= 120;
 
         }
+        const bossX = bossBox.x - worldX;
 
+        const bossHit =
+    player.x + 45 > bossX &&
+    player.x < bossX + 180;
+
+         const bossTooLow =
+    player.y > ground - 120;
+
+          if(bossHit && bossTooLow){
+
+    worldX -= 300;
+
+}
+        
     });
 
     document.getElementById("ui").innerHTML =
@@ -378,8 +402,77 @@ function endGame(){
 
     gameEnded = true;
 
+    const ending =
+    document.getElementById("ending");
+
+    ending.style.display = "flex";
+
+    ending.innerHTML = `
+
+    <h2>🏙 Warsaw</h2>
+
+    <br>
+
+    <p><b>Amine:</b> You made it all the way from Poznań.</p>
+
+    <br>
+
+    <p><b>Kasia:</b> Barely...</p>
+
+    <br>
+
+    <p><b>Amine:</b> Irish Pub?</p>
+
+    <br>
+
+    <button id="continueBtn" class="button">
+    🍀 Continue
+    </button>
+
+    `;
+
+    document
+    .getElementById("continueBtn")
+    .addEventListener("click",showChoice);
+
+}
+function showChoice(){
+
     document.getElementById("ending")
-    .style.display = "flex";
+    .innerHTML = `
+
+    <h1>🎉 You Made It To Warsaw!</h1>
+
+    <p>
+    Would you like to avoid hanging out with Amine?
+    </p>
+
+    <button id="yesBtn" class="button">
+    YES 😏
+    </button>
+
+    <button id="pubBtn" class="button">
+    🍀 Walk + Irish Pub
+    </button>
+
+    <div id="speech"></div>
+
+    `;
+
+    const yesBtn =
+    document.getElementById("yesBtn");
+
+    yesBtn.addEventListener(
+        "mouseover",
+        moveButton
+    );
+
+    document
+    .getElementById("pubBtn")
+    .addEventListener(
+        "click",
+        showTrueEnding
+    );
 
 }
 
