@@ -288,7 +288,9 @@ function update(){
 
     worldX += 4;
 
-    player.vy += 0.9;
+    // GRAVITY
+
+    player.vy += 0.8;
     player.y += player.vy;
 
     if(player.y >= ground){
@@ -301,7 +303,7 @@ function update(){
 
     // SHAMROCKS
 
-    shamrocks.forEach(s=>{
+    shamrocks.forEach(s => {
 
         const sx = s.x - worldX;
 
@@ -309,26 +311,37 @@ function update(){
             !s.collected &&
             Math.abs(player.x - sx) < 60
         ){
+
             s.collected = true;
             score++;
+
         }
 
     });
 
-    // BOX COLLISION
+    // BOX COLLISIONS
 
-    boxes.forEach(x=>{
+    boxes.forEach(x => {
 
         const bx = x - worldX;
 
-        const colliding =
-            player.x + 75 > bx &&
-            player.x < bx + 65 &&
-            player.y > ground - 60;
+        const playerLeft = player.x + 10;
+        const playerRight = player.x + 80;
 
-        if(colliding){
+        const boxLeft = bx;
+        const boxRight = bx + 65;
 
-            worldX -= 150;
+        const touchingBox =
+            playerRight > boxLeft &&
+            playerLeft < boxRight;
+
+        // only collide if Kasia is LOW enough
+        const onGround =
+            player.y > ground - 25;
+
+        if(touchingBox && onGround){
+
+            worldX -= 180;
 
         }
 
