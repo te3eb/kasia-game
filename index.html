@@ -79,7 +79,7 @@ canvas{
 
 <body>
 
-<div id="ui">🍀 0 / 4</div>
+<div id="ui">🍀 0 / 9</div>
 
 <div id="message">
 SPACE = Jump
@@ -157,10 +157,25 @@ const player = {
 };
 
 const shamrocks = [
-    {x:900,collected:false},
-    {x:1900,collected:false},
+
+    // POZNAN
+
+    {x:700,collected:false},
+    {x:1500,collected:false},
+    {x:2200,collected:false},
+
+    // TRAIN
+
     {x:3200,collected:false},
-    {x:4700,collected:false}
+    {x:4200,collected:false},
+    {x:5200,collected:false},
+
+    // WARSAW
+
+    {x:6200,collected:false},
+    {x:7200,collected:false},
+    {x:8200,collected:false}
+
 ];
 
 const boxes = [
@@ -472,24 +487,31 @@ if(worldX > 1300 && storyStep === 4){
 
 }
     document.getElementById("ui").innerHTML =
-    "🍀 " + score + " / 4";
+    "🍀 " + score + " / 9";
 
-    if(worldX > 1500){
+    if(worldX > 2500){
 
     chapter = 2;
 
-    document.getElementById("message").innerHTML =
-    "🚆 Leaving Poznań for Warsaw!";
+}
+
+if(worldX > 5500){
+
+    chapter = 3;
 
 }
-    if(worldX > 2800) chapter = 3;
-    if(worldX > 4300) chapter = 4;
 
-    if(worldX > 5800){
+if(worldX > 8500){
 
-        endGame();
+    chapter = 4;
 
-    }
+}
+
+if(worldX > 11000){
+
+    endGame();
+
+}
 
 }
 
