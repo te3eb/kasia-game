@@ -147,7 +147,8 @@ let chapter = 1;
 let score = 0;
 let worldX = 0;
 let gameEnded = false;
-
+let storyStep = 0;
+let trainStoryStep = 0;
 const player = {
     x:160,
     y:ground,
@@ -168,7 +169,23 @@ const boxes = [
     2600,
     3900
 ];
+const poznanMessages = [
 
+"📦 Time to pack for Warsaw...",
+
+"📱 Amine: Ready for Warsaw? 😄",
+
+"🤔 Did I forget something?",
+
+"📱 Amine: Don't miss the train 🚆",
+
+"🍀 Lucky shamrocks might be useful.",
+
+"📱 Amine: And don't forget the shamrocks 🍀",
+
+"🚚 Moving day is finally here!"
+
+];
 // JUMP
 
 document.addEventListener("keydown",(e)=>{
@@ -313,6 +330,26 @@ function update(){
             s.collected = true;
             score++;
 
+const luckyMessages = [
+
+"🍀 Lucky Charm Found!",
+
+"🍀 Warsaw luck increased!",
+
+"🍀 One step closer to the TRUE ENDING!",
+
+"🍀 Nice! Keep collecting them."
+
+];
+
+document.getElementById("message").innerHTML =
+luckyMessages[
+Math.floor(
+Math.random()*luckyMessages.length
+)
+];
+
+
         }
 
     });
@@ -337,11 +374,99 @@ function update(){
         }
 
     });
+    if(worldX > 100 && storyStep === 0){
 
+    document.getElementById("message").innerHTML =
+    poznanMessages[0];
+
+    storyStep++;
+
+}
+
+if(worldX > 400 && storyStep === 1){
+
+    document.getElementById("message").innerHTML =
+    poznanMessages[1];
+
+    storyStep++;
+
+}
+
+if(worldX > 700 && storyStep === 2){
+
+    document.getElementById("message").innerHTML =
+    poznanMessages[2];
+
+    storyStep++;
+
+}
+
+if(worldX > 1000 && storyStep === 3){
+
+    document.getElementById("message").innerHTML =
+    poznanMessages[3];
+
+    storyStep++;
+
+}
+
+if(worldX > 1300 && storyStep === 4){
+
+    document.getElementById("message").innerHTML =
+    poznanMessages[4];
+
+    storyStep++;
+
+}
+    if(chapter === 2){
+
+    if(worldX > 1700 && trainStoryStep === 0){
+
+        document.getElementById("message").innerHTML =
+        trainMessages[0];
+
+        trainStoryStep++;
+
+    }
+
+    if(worldX > 2000 && trainStoryStep === 1){
+
+        document.getElementById("message").innerHTML =
+        trainMessages[1];
+
+        trainStoryStep++;
+
+    }
+
+    if(worldX > 2300 && trainStoryStep === 2){
+
+        document.getElementById("message").innerHTML =
+        trainMessages[2];
+
+        trainStoryStep++;
+
+    }
+
+    if(worldX > 2600 && trainStoryStep === 3){
+
+        document.getElementById("message").innerHTML =
+        trainMessages[3];
+
+        trainStoryStep++;
+
+    }
+
+}
     document.getElementById("ui").innerHTML =
     "🍀 " + score + " / 4";
 
-    if(worldX > 1500) chapter = 2;
+    if(worldX > 1500){
+
+    chapter = 2
+    document.getElementById("message").innerHTML =
+    "🚆 Leaving Poznań for Warsaw!";
+
+}
     if(worldX > 2800) chapter = 3;
     if(worldX > 4300) chapter = 4;
 
