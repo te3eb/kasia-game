@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Kasia's Warsaw Adventure 🍀</title>
 
 <style>
@@ -24,9 +23,9 @@ canvas{
     top:15px;
     left:15px;
     color:white;
-    font-size:26px;
+    font-size:24px;
     font-weight:bold;
-    text-shadow:2px 2px 5px black;
+    text-shadow:2px 2px 4px black;
 }
 
 #message{
@@ -35,31 +34,31 @@ canvas{
     width:100%;
     text-align:center;
     color:white;
-    font-size:22px;
+    font-size:20px;
     font-weight:bold;
-    text-shadow:2px 2px 5px black;
+    text-shadow:2px 2px 4px black;
 }
 
 #ending{
     display:none;
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.9);
+    background:rgba(0,0,0,.92);
     color:white;
     justify-content:center;
     align-items:center;
     flex-direction:column;
     text-align:center;
-    z-index:99;
+    z-index:999;
 }
 
 .button{
     padding:15px 25px;
-    font-size:20px;
+    margin:10px;
     border:none;
     border-radius:10px;
-    margin:10px;
     cursor:pointer;
+    font-size:20px;
 }
 
 #yesBtn{
@@ -82,7 +81,7 @@ canvas{
 
 <body>
 
-<div id="ui">🍀 0/4</div>
+<div id="ui">🍀 0 / 4</div>
 
 <div id="message">
 SPACE = Jump
@@ -92,7 +91,9 @@ SPACE = Jump
 
 <h1>🎉 You Made It To Warsaw!</h1>
 
-<p>Would you like to avoid hanging out with Amine?</p>
+<p>
+Would you like to avoid hanging out with Amine?
+</p>
 
 <button id="yesBtn" class="button">
 YES 😏
@@ -116,24 +117,24 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const ground = canvas.height - 160;
+const ground = canvas.height - 180;
 
 // IMAGES
 
-const bgPoznan = new Image();
-bgPoznan.src = "Poznan_bg.png";
+const poznanBg = new Image();
+poznanBg.src = "Poznan_bg.png";
 
-const bgTrain = new Image();
-bgTrain.src = "train_bg.png";
+const trainBg = new Image();
+trainBg.src = "train_bg.png";
 
-const bgWarsaw = new Image();
-bgWarsaw.src = "warsaw_bg.png";
+const warsawBg = new Image();
+warsawBg.src = "warsaw_bg.png";
 
-const bgPub = new Image();
-bgPub.src = "pub_bg.png";
+const pubBg = new Image();
+pubBg.src = "pub_bg.png";
 
 const kasia = new Image();
-kasia.src = "Kasia_idle.png";
+kasia.src = "Kasia_idle1.png";
 
 const amine = new Image();
 amine.src = "Amine.png";
@@ -146,9 +147,9 @@ box.src = "box.png";
 
 // GAME
 
-let worldX = 0;
 let chapter = 1;
 let score = 0;
+let worldX = 0;
 let gameEnded = false;
 
 const player = {
@@ -159,22 +160,22 @@ const player = {
 };
 
 const shamrocks = [
-    {x:900,taken:false},
-    {x:2000,taken:false},
-    {x:3300,taken:false},
-    {x:4700,taken:false}
+    {x:900,collected:false},
+    {x:1900,collected:false},
+    {x:3200,collected:false},
+    {x:4700,collected:false}
 ];
 
 const boxes = [
     700,
     1500,
-    2800,
+    2700,
     4100
 ];
 
 // JUMP
 
-document.addEventListener("keydown",e=>{
+document.addEventListener("keydown",(e)=>{
 
     if(e.code==="Space" && !player.jumping){
 
@@ -189,11 +190,11 @@ document.addEventListener("keydown",e=>{
 
 function drawBackground(){
 
-    let bg = bgPoznan;
+    let bg = poznanBg;
 
-    if(chapter===2) bg = bgTrain;
-    if(chapter===3) bg = bgWarsaw;
-    if(chapter===4) bg = bgPub;
+    if(chapter===2) bg = trainBg;
+    if(chapter===3) bg = warsawBg;
+    if(chapter===4) bg = pubBg;
 
     if(bg.complete){
 
@@ -215,17 +216,12 @@ function drawPlayer(){
 
     if(!kasia.complete) return;
 
-    const scale = 0.35;
-
-    const width = kasia.width * scale;
-    const height = kasia.height * scale;
-
     ctx.drawImage(
         kasia,
         player.x,
-        player.y - height + 40,
-        width,
-        height
+        player.y - 180,
+        200,
+        260
     );
 
 }
@@ -242,8 +238,8 @@ function drawAmine(){
         amine,
         canvas.width - 260,
         ground - 120,
-        160,
-        200
+        170,
+        220
     );
 
 }
@@ -254,12 +250,12 @@ function drawShamrocks(){
 
     shamrocks.forEach(s=>{
 
-        if(!s.taken){
+        if(!s.collected){
 
             ctx.drawImage(
                 shamrock,
-                s.x-worldX,
-                ground-30,
+                s.x - worldX,
+                ground - 20,
                 40,
                 40
             );
@@ -278,10 +274,10 @@ function drawBoxes(){
 
         ctx.drawImage(
             box,
-            x-worldX,
+            x - worldX,
             ground,
-            60,
-            60
+            70,
+            70
         );
 
     });
@@ -309,14 +305,14 @@ function update(){
 
     shamrocks.forEach(s=>{
 
-        const sx = s.x-worldX;
+        const sx = s.x - worldX;
 
         if(
-            !s.taken &&
-            Math.abs(player.x-sx) < 50
+            !s.collected &&
+            Math.abs(player.x - sx) < 60
         ){
 
-            s.taken = true;
+            s.collected = true;
             score++;
 
         }
@@ -324,11 +320,16 @@ function update(){
     });
 
     document.getElementById("ui").innerHTML =
-    "🍀 " + score + "/4";
+    "🍀 " + score + " / 4";
 
-    if(worldX > 1500) chapter = 2;
-    if(worldX > 2800) chapter = 3;
-    if(worldX > 4200) chapter = 4;
+    if(worldX > 1500)
+        chapter = 2;
+
+    if(worldX > 2800)
+        chapter = 3;
+
+    if(worldX > 4300)
+        chapter = 4;
 
     if(worldX > 5600){
 
@@ -361,7 +362,7 @@ function draw(){
 
 }
 
-// END GAME
+// ENDING
 
 function endGame(){
 
@@ -374,19 +375,19 @@ function endGame(){
 
 // LOOP
 
-function loop(){
+function gameLoop(){
 
     update();
 
     draw();
 
-    requestAnimationFrame(loop);
+    requestAnimationFrame(gameLoop);
 
 }
 
 window.onload = ()=>{
 
-    loop();
+    gameLoop();
 
 };
 
@@ -416,20 +417,23 @@ function moveButton(){
 
     const jokes = [
         "Nice try 😂",
+        "Not that easy 😏",
         "The pub is this way 🍀",
-        "Not so fast 😏",
+        "Error 404: Alternative ending not found",
         "Current success rate: 0%",
         "Amine used Quick Attack!"
     ];
 
     speech.innerText =
-    jokes[Math.floor(Math.random()*jokes.length)];
+    jokes[Math.floor(
+        Math.random()*jokes.length
+    )];
 
 }
 
 yesBtn.addEventListener(
-"mouseover",
-moveButton
+    "mouseover",
+    moveButton
 );
 
 // TRUE ENDING
@@ -438,7 +442,7 @@ document
 .getElementById("pubBtn")
 .addEventListener("click",()=>{
 
-document.getElementById("ending").innerHTML=`
+document.getElementById("ending").innerHTML = `
 
 <h1>🏆 TRUE ENDING</h1>
 
@@ -446,15 +450,15 @@ document.getElementById("ending").innerHTML=`
 
 <br>
 
-<p>✅ Survived Poznań</p>
-<p>✅ Travelled To Warsaw</p>
-<p>✅ Collected Shamrocks</p>
-<p>✅ Found The Irish Pub</p>
-<p>✅ Hung Out With Amine</p>
+<p>✅ Survived packing in Poznań</p>
+<p>✅ Travelled to Warsaw</p>
+<p>✅ Collected shamrocks</p>
+<p>✅ Found the Irish Pub</p>
+<p>✅ Hung out with Amine</p>
 
 <br>
 
-<h1>See You Soon Kasia ❤️</h1>
+<h1>See you soon, Hot stuff 🖤</h1>
 
 `;
 
